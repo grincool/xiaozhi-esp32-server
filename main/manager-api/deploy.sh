@@ -8,7 +8,7 @@ set -e
 # 配置变量
 APP_NAME="xiaozhi-esp32-api"
 JAR_NAME="${APP_NAME}.jar"
-APP_BASE="/projects/running-apps/xiaozhi-api"
+APP_BASE="~/projects/running-apps/xiaozhi-api"
 JAR_DIR="${APP_BASE}/data"
 LOG_DIR="${APP_BASE}/logs"
 CONFIG_DIR="${APP_BASE}/configs"
