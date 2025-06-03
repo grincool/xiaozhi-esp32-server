@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=deployer
 WorkingDirectory=/home/deployer/projects/xiaozhi-esp32-server/main/xiaozhi-server
-ExecStart=/bin/bash -c 'source /home/deployer/miniconda3/bin/activate xiaozhi-esp32-server && python app.py'
+ExecStart=/bin/bash -c 'source /opt/miniconda3/activate xiaozhi-esp32-server && python app.py'
 Restart=always
 RestartSec=10
 # 将日志输出到专门的日志文件
