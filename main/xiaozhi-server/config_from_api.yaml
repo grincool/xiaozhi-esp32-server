@@ -8,6 +8,7 @@
 server:
   ip: 0.0.0.0
   port: 8000
+  websocket: ws://8.130.148.13:8000/xiaozhi/v1/
 manager-api:
   # 你的manager-api的地址，最好使用局域网ip
   url: http://127.0.0.1:8002/xiaozhi
