@@ -14,10 +14,10 @@
       </div>
     </div>
     <div class="device-name">
-      设备型号：{{ device.ttsModelName }}
+      语言模型：{{ device.llmModelName }}
     </div>
     <div class="device-name">
-      音色模型：{{ device.ttsVoiceName }}
+      音色模型：{{ device.ttsModelName }} ({{ device.ttsVoiceName }})
     </div>
     <div style="display: flex;gap: 10px;align-items: center;">
       <div class="settings-btn" @click="handleConfigure">
@@ -26,8 +26,12 @@
       <div class="settings-btn" @click="handleDeviceManage">
         设备管理({{ device.deviceCount }})
       </div>
-      <div class="settings-btn" @click="handleChatHistory">
-        聊天记录
+      <div class="settings-btn" @click="handleChatHistory"
+        :class="{ 'disabled-btn': device.memModelId === 'Memory_nomem' }">
+        <el-tooltip v-if="device.memModelId === 'Memory_nomem'" content="请先在“配置角色”界面开启记忆" placement="top">
+          <span>聊天记录</span>
+        </el-tooltip>
+        <span v-else>聊天记录</span>
       </div>
     </div>
     <div class="version-info">
@@ -77,6 +81,9 @@ export default {
       this.$router.push({ path: '/device-management', query: { agentId: this.device.agentId } });
     },
     handleChatHistory() {
+      if (this.device.memModelId === 'Memory_nomem') {
+        return
+      }
       this.$emit('chat-history', { agentId: this.device.agentId, agentName: this.device.agentName })
     }
   }
@@ -119,6 +126,12 @@ export default {
   font-size: 12px;
   color: #979db1;
   font-weight: 400;
+}
+
+.disabled-btn {
+  background: #e6e6e6;
+  color: #999;
+  cursor: not-allowed;
 }
 </style>
 

@@ -14,7 +14,7 @@ class LLMProvider(LLMProviderBase):
         self.base_url = config.get("base_url", config.get("url"))  # 默认使用 base_url
         self.api_url = f"{self.base_url}/api/conversation/process"  # 拼接完整的 API URL
 
-    def response(self, session_id, dialogue):
+    def response(self, session_id, dialogue, **kwargs):
         try:
             # home assistant语音助手自带意图，无需使用xiaozhi ai自带的，只需要把用户说的话传递给home assistant即可
 
@@ -66,7 +66,6 @@ class LLMProvider(LLMProviderBase):
             logger.bind(tag=TAG).error(f"生成响应时出错: {e}")
 
     def response_with_functions(self, session_id, dialogue, functions=None):
-        logger.bind(tag=TAG).info(
-            f"homeassistant不支持（function call），建议使用意图识别使用:nointent"
+        logger.bind(tag=TAG).error(
+            f"homeassistant不支持（function call），建议使用其他意图识别"
         )
-        return self.response(session_id, dialogue)
