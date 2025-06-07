@@ -17,7 +17,7 @@ server:
   # 当你使用docker部署或使用公网部署(使用ssl、域名)时，不一定准确
   # 所以如果你使用docker部署时，将websocket设置成局域网地址
   # 如果你使用公网部署时，将vwebsocket设置成公网地址
-  websocket: ws://你的ip或者域名:端口号/xiaozhi/v1/
+    websocket: ws://8.130.148.13:8000/xiaozhi/v1/
   # 视觉分析接口地址
   # 向设备发送的视觉分析的接口地址
   # 如果按下面默认的写法，系统会自动生成视觉识别地址，并输出在启动日志里，这个地址你可以直接用浏览器访问确认一下
@@ -168,9 +168,8 @@ selected_module:
   # 语音识别模块，默认使用FunASR本地模型
   ASR: FunASR
   # 将根据配置名称对应的type调用实际的LLM适配器
-  LLM: ChatGLMLLM
-  # 视觉语言大模型
-  VLLM: ChatGLMVLLM
+  # LLM: ChatGLMLLM
+  LLM: DeepSeekLLM
   # TTS将根据配置名称对应的type调用实际的TTS适配器
   TTS: EdgeTTS
   # 记忆模块，默认不开启记忆；如果想使用超长记忆，推荐使用mem0ai；如果注重隐私，请使用本地的mem_local_short
@@ -367,9 +366,11 @@ LLM:
     # 定义LLM API类型
     type: openai
     # 可在这里找到你的api key https://platform.deepseek.com/
+    # * deepseek-chat 模型已全面升级为 DeepSeek-V3，接口不变。 通过指定 model='deepseek-chat' 即可调用 DeepSeek-V3。
+    # * deepseek-reasoner 是 DeepSeek 最新推出的推理模型 DeepSeek-R1。通过指定 model='deepseek-reasoner'，即可调用 DeepSeek-R1。
     model_name: deepseek-chat
     url: https://api.deepseek.com
-    api_key: 你的deepseek web key
+    api_key: sk-58e8d02f6d0c4f5db40933dc6ccd58fc
   ChatGLMLLM:
     # 定义LLM API类型
     type: openai
