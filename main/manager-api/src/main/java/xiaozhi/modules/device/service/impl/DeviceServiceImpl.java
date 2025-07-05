@@ -44,6 +44,7 @@ import xiaozhi.modules.device.vo.UserShowDeviceListVO;
 import xiaozhi.modules.security.user.SecurityUser;
 import xiaozhi.modules.sys.service.SysParamsService;
 import xiaozhi.modules.sys.service.SysUserUtilService;
+import xiaozhi.modules.device.dto.DeviceManualAddDTO;
 
 @Slf4j
 @Service
@@ -174,6 +175,24 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
         }
 
         response.setWebsocket(websocket);
+        
+        // 添加MQTT UDP配置
+        // 从系统参数获取WebSocket URL，如果未配置不使用默认值
+        String mqttUdpConfig = sysParamsService.getValue(Constant.SERVER_MQTT_GATEWAY, false);
+        if(!StringUtils.isBlank(mqttUdpConfig)) {
+            DeviceReportRespDTO.MQTT mqtt= new DeviceReportRespDTO.MQTT();
+            mqtt.setEndpoint(mqttUdpConfig);
+            mqtt.setClient_id(clientId);
+            String userNameString = deviceById.getId().replace(":", "_");
+            mqtt.setUsername(userNameString);
+            mqtt.setPassword(deviceById.getBoard());
+            String topicString = deviceById.getBoard() + '/' + deviceById.getAgentId();
+            mqtt.setPublish_topic(topicString);
+            String subscribeString = "devices/p2p/"+userNameString;
+            mqtt.setSubscribe_topic(subscribeString);
+            response.setMqtt(mqtt);
+        }
+       
 
         if (deviceById != null) {
             // 如果设备存在，则异步更新上次连接时间和版本信息
@@ -409,5 +428,31 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
             }
         }
         return 0;
+    }
+
+    @Override
+    public void manualAddDevice(Long userId, DeviceManualAddDTO dto) {
+        // 检查mac是否已存在
+        QueryWrapper<DeviceEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("mac_address", dto.getMacAddress());
+        DeviceEntity exist = baseDao.selectOne(wrapper);
+        if (exist != null) {
+            throw new RenException("该Mac地址已存在");
+        }
+        Date now = new Date();
+        DeviceEntity entity = new DeviceEntity();
+        entity.setId(dto.getMacAddress());
+        entity.setUserId(userId);
+        entity.setAgentId(dto.getAgentId());
+        entity.setBoard(dto.getBoard());
+        entity.setAppVersion(dto.getAppVersion());
+        entity.setMacAddress(dto.getMacAddress());
+        entity.setCreateDate(now);
+        entity.setUpdateDate(now);
+        entity.setLastConnectedAt(now);
+        entity.setCreator(userId);
+        entity.setUpdater(userId);
+        entity.setAutoUpdate(1);
+        baseDao.insert(entity);
     }
 }
